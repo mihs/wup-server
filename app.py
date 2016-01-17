@@ -4,7 +4,9 @@ import os
 import uuid
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_ENV'])
+if not ('APP_ENV' in os.environ):
+  os.environ['APP_ENV'] = 'development'
+app.config.from_object('config.' + os.environ['APP_ENV'])
 import database
 database.init(app)
 from database import db
@@ -12,7 +14,7 @@ import models
 
 import logging
 from logging import FileHandler
-file_handler = FileHandler('./log/{0}'.format(os.environ['APP_ENV'].split('.')[1]))
+file_handler = FileHandler('./log/{0}'.format(os.environ['APP_ENV']))
 file_handler.setLevel(app.config['LOG_LEVEL'])
 app.logger.addHandler(file_handler)
 
